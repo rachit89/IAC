@@ -12,32 +12,9 @@ module "vpn" {
   key_name               = local.key_name
   vpc_security_group_ids = [aws_security_group.pritunl-sg.id]
   subnet_id              = element(module.vpc.public_subnets, 0)
-  iam_instance_profile   = local.iam_instance_profile
-  user_data              = <<EOF
-  !/bin/bash
-curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv E162F504A20CDF15827F718D4B7C549A058F8B6B
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-echo "deb http://repo.pritunl.com/stable/apt focal main" | sudo tee /etc/apt/sources.list.d/pritunl.list
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-apt-get update
-apt-get install mongodb-server pritunl -y
-sudo systemctl start mongodb
-sudo systemctl start pritunl
-sudo apt upgrade -y
-sudo mkdir /tmp/ssm
-cd /tmp/ssm
-wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
-sudo apt install amazon-ssm-agent.deb -y
-sudo systemctl start amazon-ssm-agent
-sudo systemctl enable amazon-ssm-agent
-rm amazon-ssm-agent.deb
-cd /home/ubuntu/
-key=$(sudo pritunl setup-key) 
-echo "$key" > /home/ubuntu/key
-Passwd=$(sudo pritunl default-password)
-echo "$Passwd" > /home/ubuntu/pass
-EOF
+  iam_instance_profile   = resource.aws_iam_instance_profile.dev-resources-iam-profile.name
+  user_data              = filebase64("pritunl.sh")
+
 
 
 
@@ -100,7 +77,6 @@ resource "aws_security_group" "pritunl-sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
     description = "TLS from VPC"
     from_port   = 443

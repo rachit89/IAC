@@ -1,5 +1,4 @@
 #!/bin/bash
-sudo su
 curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
 apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv E162F504A20CDF15827F718D4B7C549A058F8B6B
 apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A

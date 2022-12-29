@@ -53,7 +53,6 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Deploy"
 
     action {
-      name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "CodeDeploy"
@@ -61,11 +60,24 @@ resource "aws_codepipeline" "codepipeline" {
       version         = "1"
 
       configuration = {
-      ApplicationName = "rachit"
-      DeploymentGroupName = "rachit"
+      ApplicationName = resource.aws_codedeploy_app.app.name
+      DeploymentGroupName = resource.aws_codedeploy_deployment_group.app-deploy-group.deployment_group_name
       }
     }
   }
+}
+
+resource "aws_codedeploy_app" "app" {
+  compute_platform = server
+  name             = my_app
+}
+
+resource "aws_codedeploy_deployment_group" "app-deploy-group" {
+  app_name               = resource.aws_codedeploy_app.app.name
+  deployment_group_name  = "${aws_codedeploy_app.app.name}-deployment-group"
+  deployment_config_name = "CodeDeploy.OneAtATime"
+  service_role_arn       = resource.aws_iam_role.codedeploy_role.arn
+  autoscaling_groups     = module.rachit-asg.name
 }
 
 resource "aws_codestarconnections_connection" "example" {
@@ -81,6 +93,87 @@ resource "aws_s3_bucket_acl" "codepipeline_bucket_acl" {
   bucket = aws_s3_bucket.codepipeline_bucket.id
   acl    = "private"
 }
+
+resource "aws_iam_role" "codedeploy_role" {
+  name = "rachit-deploy-role"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+resource "aws_iam_role_policy" "codedeploy_policy" {
+  name = "codedeploy-rachit"
+  role = aws_iam_role.codedeploy_role.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:DeleteLifecycleHook",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:PutLifecycleHook",
+                "autoscaling:RecordLifecycleActionHeartbeat",
+                "autoscaling:CreateAutoScalingGroup",
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:EnableMetricsCollection",
+                "autoscaling:DescribePolicies",
+                "autoscaling:DescribeScheduledActions",
+                "autoscaling:DescribeNotificationConfigurations",
+                "autoscaling:SuspendProcesses",
+                "autoscaling:ResumeProcesses",
+                "autoscaling:AttachLoadBalancers",
+                "autoscaling:AttachLoadBalancerTargetGroups",
+                "autoscaling:PutScalingPolicy",
+                "autoscaling:PutScheduledUpdateGroupAction",
+                "autoscaling:PutNotificationConfiguration",
+                "autoscaling:PutWarmPool",
+                "autoscaling:DescribeScalingActivities",
+                "autoscaling:DeleteAutoScalingGroup",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ec2:TerminateInstances",
+                "tag:GetResources",
+                "sns:Publish",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:PutMetricAlarm",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeInstanceHealth",
+                "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTargetHealth",
+                "elasticloadbalancing:RegisterTargets",
+                "elasticloadbalancing:DeregisterTargets"
+            ],
+            "Resource": "*"
+        },
+       {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
 
 resource "aws_iam_role" "codepipeline_role" {
   name = "test-role"
@@ -100,6 +193,7 @@ resource "aws_iam_role" "codepipeline_role" {
 }
 EOF
 }
+
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
   name = "codepipeline_policy"
