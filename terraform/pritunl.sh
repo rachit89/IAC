@@ -8,3 +8,5 @@ apt-get update
 apt-get install mongodb-server pritunl -y
 systemctl start mongodb
 systemctl start pritunl
+key=$(sudo pritunl setup-key) 
+echo "$key" > /home/ubuntu/key

@@ -13,10 +13,7 @@ module "vpn" {
   vpc_security_group_ids = [aws_security_group.pritunl-sg.id]
   subnet_id              = element(module.vpc.public_subnets, 0)
   iam_instance_profile   = resource.aws_iam_instance_profile.dev-resources-iam-profile.name
-  user_data              = filebase64("pritunl.sh")
-
-
-
+  user_data              = file("pritunl.sh")
 
   tags = {
     Terraform   = local.Terraform
