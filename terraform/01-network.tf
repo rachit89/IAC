@@ -1,35 +1,5 @@
 ############# CREATING VPN  ##############################
-data "aws_ami" "ubuntu" {
-    most_recent = true
 
-    filter {
-        name   = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-    }
-    
-    filter {
-        name = "virtualization-type"
-        values = ["hvm"]
-    }
-    filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-    owners = ["amazon"]
-}
-
-resource "tls_private_key" "pk" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-resource "aws_key_pair" "vpn" {
-  key_name   = "vpnKey"           
-  public_key = tls_private_key.pk.public_key_openssh
-  provisioner "local-exec" {      
-  command = "echo '${tls_private_key.pk.private_key_pem}' > ./keys/vpnKey.pem"
-  }
-}
 
 module "vpn" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
@@ -52,10 +22,6 @@ module "vpn" {
 
 
 ################ security group for pritunl ######################
-
-
-################# Getting public ip for VPN CONNECT ##############
-
 
 
 resource "aws_iam_instance_profile" "dev-resources-iam-profile" {

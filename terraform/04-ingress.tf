@@ -187,42 +187,8 @@ module "rachit_route53-record" {
 
 ################ CREATING ASG ##########################
 
-data "aws_ami" "packer-image" {
-    most_recent = true
 
-    filter {
-        name   = "name"
-        values = ["myapp-node-ami-*"]  
-    }
 
-    filter {
-        name = "virtualization-type"
-        values = ["hvm"]
-    }
-    filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-    }
-    filter {
-    name   = "architecture"
-    values = ["x86_64"]
-    }
-
-   
-
-    owners = ["self"]
-}
-resource "tls_private_key" "nodeapp" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-resource "aws_key_pair" "app" {
-  key_name   = "nodeapp"  
-  public_key = tls_private_key.nodeapp.public_key_openssh          
-  provisioner "local-exec" {     
-  command = "echo '${tls_private_key.nodeapp.private_key_pem}' > ./keys/nodeapp.pem"
-  }
-}
 module "asg" {
   source = "terraform-aws-modules/autoscaling/aws"
 
