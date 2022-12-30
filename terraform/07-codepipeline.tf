@@ -1,5 +1,5 @@
 resource "aws_codepipeline" "codepipeline" {
-  name     = "tf-test-pipeline"
+  name     = local.pipeline_name
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
@@ -16,12 +16,12 @@ resource "aws_codepipeline" "codepipeline" {
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
       version          = "1"
-      output_artifacts = ["rachit_output"]
+      output_artifacts = [local.output_artifacts]
 
       configuration = {
         ConnectionArn    = aws_codestarconnections_connection.example.arn
-        FullRepositoryId = "rachit89/node-express-realworld-example-app"
-        BranchName       = "master"
+        FullRepositoryId = local.FullRepositoryId
+        BranchName       = local.BranchName
       }
     }
   }
@@ -34,12 +34,12 @@ resource "aws_codepipeline" "codepipeline" {
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
-      input_artifacts  = ["rachit_output"]
-      output_artifacts = ["rachit_build_output"]
+      input_artifacts  = [local.output_artifacts]
+      output_artifacts = ["${local.name}_build_output"]
       version          = "1"
 
       configuration = {
-        ProjectName = "rachit-test-project"
+        ProjectName = "${local.name}-project"
       }
     }
   }
@@ -52,7 +52,7 @@ resource "aws_codepipeline" "codepipeline" {
       category        = "Deploy"
       owner           = "AWS"
       provider        = "CodeDeploy"
-      input_artifacts = ["rachit_build_output"]
+      input_artifacts = ["${local.name}_build_output"]
       version         = "1"
 
       configuration = {
@@ -63,25 +63,13 @@ resource "aws_codepipeline" "codepipeline" {
   }
 }
 
-resource "aws_codedeploy_app" "app" {
-  compute_platform = "Server"
-  name             = "my_app"
-}
-
-resource "aws_codedeploy_deployment_group" "app-deploy-group" {
-  app_name               = resource.aws_codedeploy_app.app.name
-  deployment_group_name  = "${aws_codedeploy_app.app.name}-deployment-group"
-  service_role_arn       = resource.aws_iam_role.codedeploy_role.arn
-  autoscaling_groups     = [module.rachit-asg.autoscaling_group_name]
-}
-
 resource "aws_codestarconnections_connection" "example" {
-  name          = "example-connection"
+  name          = "${local.name}-connection"
   provider_type = "GitHub"
 }
 
 resource "aws_s3_bucket" "codepipeline_bucket" {
-  bucket = "rachit-squareops"
+  bucket = "${local.name}-squareops"
 }
 
 resource "aws_s3_bucket_acl" "codepipeline_bucket_acl" {
@@ -89,103 +77,10 @@ resource "aws_s3_bucket_acl" "codepipeline_bucket_acl" {
   acl    = "private"
 }
 
-resource "aws_iam_role" "codedeploy_role" {
-  name = "rachit-deploy-role"
-
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "codedeploy.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy" "codedeploy_policy" {
-  name = "codedeploy-rachit"
-  role = aws_iam_role.codedeploy_role.id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:CompleteLifecycleAction",
-                "autoscaling:DeleteLifecycleHook",
-                "autoscaling:DescribeAutoScalingGroups",
-                "autoscaling:DescribeLifecycleHooks",
-                "autoscaling:PutLifecycleHook",
-                "autoscaling:RecordLifecycleActionHeartbeat",
-                "autoscaling:CreateAutoScalingGroup",
-                "autoscaling:UpdateAutoScalingGroup",
-                "autoscaling:EnableMetricsCollection",
-                "autoscaling:DescribePolicies",
-                "autoscaling:DescribeScheduledActions",
-                "autoscaling:DescribeNotificationConfigurations",
-                "autoscaling:SuspendProcesses",
-                "autoscaling:ResumeProcesses",
-                "autoscaling:AttachLoadBalancers",
-                "autoscaling:AttachLoadBalancerTargetGroups",
-                "autoscaling:PutScalingPolicy",
-                "autoscaling:PutScheduledUpdateGroupAction",
-                "autoscaling:PutNotificationConfiguration",
-                "autoscaling:PutWarmPool",
-                "autoscaling:DescribeScalingActivities",
-                "autoscaling:DeleteAutoScalingGroup",
-                "ec2:DescribeInstances",
-                "ec2:DescribeInstanceStatus",
-                "ec2:TerminateInstances",
-                "tag:GetResources",
-                "sns:Publish",
-                "cloudwatch:DescribeAlarms",
-                "cloudwatch:PutMetricAlarm",
-                "elasticloadbalancing:DescribeLoadBalancers",
-                "elasticloadbalancing:DescribeInstanceHealth",
-                "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-                "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-                "elasticloadbalancing:DescribeTargetGroups",
-                "elasticloadbalancing:DescribeTargetHealth",
-                "elasticloadbalancing:RegisterTargets",
-                "elasticloadbalancing:DeregisterTargets"
-            ],
-            "Resource": "*"
-        },
-       {
-            "Effect": "Allow",
-            "Action": [
-                "s3:*",
-                "s3-object-lambda:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "iam:PassRole",
-                "ec2:CreateTags",
-                "ec2:RunInstances"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
 
 
 resource "aws_iam_role" "codepipeline_role" {
-  name = "test-role"
+  name = "${local.name}-role"
 
   assume_role_policy = <<EOF
 {
@@ -205,7 +100,7 @@ EOF
 
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
-  name = "codepipeline_policy"
+  name = "${local.name}codepipeline-policy"
   role = aws_iam_role.codepipeline_role.id
 
   policy = <<EOF

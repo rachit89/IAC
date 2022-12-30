@@ -7,12 +7,12 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 8.0"
 
-  name               = "${local.name}-alb"
+  name               = "my-app-alb"
   load_balancer_type = "application"
 
   vpc_id          = module.vpc.vpc_id
   subnets         = module.vpc.public_subnets
-  security_groups = [resource.aws_security_group.rachit-sg-lb.id]
+  security_groups = [resource.aws_security_group.sg-lb.id]
 
   target_groups = [
     {
@@ -83,7 +83,9 @@ module "alb" {
   tags = {
     Environment = local.Environment
     name        = "${local.name}-tg"
+    Owner       = local.Owner
   }
+
   https_listener_rules = [
     {
       https_listener_index = 0
@@ -107,7 +109,7 @@ module "alb" {
 
 
 
-resource "aws_security_group" "rachit-sg-lb" {
+resource "aws_security_group" "sg-lb" {
   name        = "${local.name}-sg-lb"
   description = "Allow TLS inbound and outbund traffic"
   vpc_id      = module.vpc.vpc_id
@@ -133,7 +135,7 @@ resource "aws_security_group" "rachit-sg-lb" {
   }
   tags = {
     name        = "${local.name}-sg-lb"
-    Owner       = local.name
+    Owner       = local.Owner
     Environment = local.Environment
     Terraform   = local.Terraform
   }
@@ -152,7 +154,7 @@ module "route53-record" {
     source  = "clouddrove/route53-record/aws"
     version = "1.0.1"
     zone_id = local.zone_id
-    name    = "rachit-wp.rtd.squareops.co.in"
+    name    = "myapp.rtd.squareops.co.in"
     type    = "A"
     alias   = {
       name  = module.alb.lb_dns_name
@@ -171,7 +173,7 @@ module "rachit_route53-record" {
     source  = "clouddrove/route53-record/aws"
     version = "1.0.1"
     zone_id = local.zone_id
-    name    = "rachitvpn.rtd.squareops.co.in"
+    name    = local.host_headers
     type    = "A"
     alias   = {
       name  = module.alb.lb_dns_name
@@ -185,9 +187,43 @@ module "rachit_route53-record" {
 
 ################ CREATING ASG ##########################
 
+data "aws_ami" "packer-image" {
+    most_recent = true
 
+    filter {
+        name   = "name"
+        values = ["myapp-node-ami-*"]  
+    }
 
-module "rachit-asg" {
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+    filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+    }
+    filter {
+    name   = "architecture"
+    values = ["x86_64"]
+    }
+
+   
+
+    owners = ["self"]
+}
+resource "tls_private_key" "nodeapp" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+resource "aws_key_pair" "app" {
+  key_name   = "nodeapp"  
+  public_key = tls_private_key.nodeapp.public_key_openssh          
+  provisioner "local-exec" {     
+  command = "echo '${tls_private_key.nodeapp.private_key_pem}' > ./keys/nodeapp.pem"
+  }
+}
+module "asg" {
   source = "terraform-aws-modules/autoscaling/aws"
 
   name = "${local.name}-asg"
@@ -219,13 +255,13 @@ module "rachit-asg" {
   launch_template_description = "Launch template example"
   update_default_version      = true
 
-  image_id                  = local.image_id
-  instance_type             = "t3a.medium"
-  key_name                  = local.key_name
+  image_id                  = "${data.aws_ami.packer-image.id}"
+  instance_type             = local.instance-size
+  key_name                  = aws_key_pair.app.key_name
   ebs_optimized             = true
   enable_monitoring         = true
   target_group_arns         = [module.alb.target_group_arns[0]]
-  iam_instance_profile_name = "rachit-codedeploy"
+  iam_instance_profile_name = aws_iam_instance_profile.instance-profile.name
   security_groups           = [aws_security_group.rachit-sg-node.id]
   user_data                 = base64encode(local.user_data) 
 
@@ -242,7 +278,7 @@ module "rachit-asg" {
 resource "aws_autoscaling_policy" "asg-policy" {
   count                     = 1
   name                      = "${local.name}asg-cpu-policy"
-  autoscaling_group_name    = module.rachit-asg.autoscaling_group_name
+  autoscaling_group_name    = module.asg.autoscaling_group_name
   estimated_instance_warmup = 60
   policy_type               = "TargetTrackingScaling"
   target_tracking_configuration {
@@ -273,7 +309,7 @@ resource "aws_security_group" "rachit-sg-node" {
     from_port       = 3000
     to_port         = 3000
     protocol        = "tcp"
-    security_groups = [aws_security_group.rachit-sg-lb.id]
+    security_groups = [aws_security_group.sg-lb.id]
   }
   egress {
     from_port   = 0
@@ -288,3 +324,109 @@ resource "aws_security_group" "rachit-sg-node" {
     Terraform   = local.Terraform
   }
 }
+
+resource "aws_iam_instance_profile" "instance-profile" {
+  name = "${local.name}-profile"
+  role = aws_iam_role.instance-role.name
+}
+
+resource "aws_iam_role" "instance-role" {
+  name = "${local.name}-instance-profile"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "ssm-policy" {
+role       = aws_iam_role.instance-role.name
+policy_arn = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+}
+
+
+resource "aws_iam_role_policy" "instance-profile" {
+  name = "${local.name}-deploy-policy"
+  role = aws_iam_role.instance-role.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:DeleteLifecycleHook",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:PutLifecycleHook",
+                "autoscaling:RecordLifecycleActionHeartbeat",
+                "autoscaling:CreateAutoScalingGroup",
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:EnableMetricsCollection",
+                "autoscaling:DescribePolicies",
+                "autoscaling:DescribeScheduledActions",
+                "autoscaling:DescribeNotificationConfigurations",
+                "autoscaling:SuspendProcesses",
+                "autoscaling:ResumeProcesses",
+                "autoscaling:AttachLoadBalancers",
+                "autoscaling:AttachLoadBalancerTargetGroups",
+                "autoscaling:PutScalingPolicy",
+                "autoscaling:PutScheduledUpdateGroupAction",
+                "autoscaling:PutNotificationConfiguration",
+                "autoscaling:PutWarmPool",
+                "autoscaling:DescribeScalingActivities",
+                "autoscaling:DeleteAutoScalingGroup",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ec2:TerminateInstances",
+                "tag:GetResources",
+                "sns:Publish",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:PutMetricAlarm",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeInstanceHealth",
+                "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTargetHealth",
+                "elasticloadbalancing:RegisterTargets",
+                "elasticloadbalancing:DeregisterTargets"
+            ],
+            "Resource": "*"
+        },
+       {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole",
+                "ec2:CreateTags",
+                "ec2:RunInstances"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+

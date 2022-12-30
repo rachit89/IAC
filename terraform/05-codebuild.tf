@@ -1,5 +1,5 @@
 resource "aws_iam_role" "example" {
-  name = "build-rachit"
+  name = "${local.name}-build"
 
   assume_role_policy = <<EOF
 {
@@ -92,8 +92,8 @@ resource "aws_iam_role_policy" "example" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:logs:us-west-2:421320058418:log-group:rachitMERN",
-                "arn:aws:logs:us-west-2:421320058418:log-group:rachitMERN:*"
+                "arn:aws:logs:us-west-2:421320058418:log-group:myappMERN",
+                "arn:aws:logs:us-west-2:421320058418:log-group:myappMERN:*"
             ],
             "Action": [
                 "logs:CreateLogGroup",
@@ -115,7 +115,7 @@ POLICY
 }
 
 resource "aws_codebuild_project" "example" {
-  name          = "rachit-test-project"
+  name          = "${local.name}-project"
   description   = "test_codebuild_project"
   build_timeout = "5"
   service_role  = aws_iam_role.example.arn
@@ -126,23 +126,23 @@ resource "aws_codebuild_project" "example" {
 
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:6.0"
-    type                        = "LINUX_CONTAINER"
+    image                       = local.image
+    type                        = local.type
     image_pull_credentials_type = "CODEBUILD"
   }
 
   logs_config {
     cloudwatch_logs {
-      group_name  = "rachitMERN"
-      stream_name = "rachitMERN"
+      group_name  = local.group_name
+      stream_name = local.stream_name
     }
   }
 
   source {
     type            = "GITHUB"
-    location        = "https://github.com/rachit89/node-express-realworld-example-app.git"
+    location        = local.location
     git_clone_depth = 1
-
+ 
     git_submodules_config {
       fetch_submodules = true
     }

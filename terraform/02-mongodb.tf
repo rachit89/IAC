@@ -1,8 +1,23 @@
 ###################### LAUNCHING INSTANCES FOR MONGODB  ######################
 
+resource "tls_private_key" "mongo" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+resource "aws_key_pair" "db" {
+  key_name   = "mongo" 
+  public_key = tls_private_key.mongo.public_key_openssh
+  provisioner "local-exec" {       
+  command = "echo '${tls_private_key.mongo.private_key_pem}' > ./keys/mongo.pem"
+  }
+}
 
 
-module "rachit_ec2_instance" {
+
+
+
+
+module "myapp_ec2_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 3.0"
 
@@ -10,11 +25,11 @@ module "rachit_ec2_instance" {
 
   name = "${local.name}-${each.key}"
 
-  ami                    = local.ami
-  instance_type          = "t3a.medium"
-  key_name               = local.key_name
+  ami                    = "${data.aws_ami.ubuntu.id}"
+  instance_type          = local.instance-size
+  key_name               = aws_key_pair.db.key_name
   monitoring             = true
-  vpc_security_group_ids = [resource.aws_security_group.rachit-sg-mongo.id]
+  vpc_security_group_ids = [resource.aws_security_group.myapp-sg-mongo.id]
   subnet_id              = module.vpc.private_subnets[0]
 
   user_data              = <<EOF
@@ -44,7 +59,7 @@ EOF
 
 
 
-resource "aws_security_group" "rachit-sg-mongo" {
+resource "aws_security_group" "myapp-sg-mongo" {
   name        = "${local.name}-sg-mongo"
   description = "Allow TLS inbound and outbund traffic"
   vpc_id      = module.vpc.vpc_id

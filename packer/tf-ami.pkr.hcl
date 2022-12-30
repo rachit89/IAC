@@ -8,7 +8,7 @@ packer {
 }
 
 
-source "amazon-ebs" "rachit-node-ami-7" {
+source "amazon-ebs" "myapp-node-ami-0" {
   source_ami_filter {
     filters = {
        virtualization-type = "hvm"
@@ -18,7 +18,7 @@ source "amazon-ebs" "rachit-node-ami-7" {
     owners = ["amazon"]
     most_recent = true
   }
-  ami_name      = "rachit-node-ami-7"
+  ami_name      = "myapp-node-ami-0"
   instance_type = "t3a.small"
   region        = "us-west-2"
   ssh_username = "ubuntu"
@@ -27,7 +27,7 @@ source "amazon-ebs" "rachit-node-ami-7" {
 
 build {
   sources = [
-    "source.amazon-ebs.rachit-node-ami-7"
+    "source.amazon-ebs.myapp-node-ami-0"
   ]
   provisioner "shell" {
   script       = "./script.sh"

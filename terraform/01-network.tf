@@ -1,15 +1,43 @@
 ############# CREATING VPN  ##############################
+data "aws_ami" "ubuntu" {
+    most_recent = true
 
+    filter {
+        name   = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    }
+    
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+    filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
 
+    owners = ["amazon"]
+}
 
+resource "tls_private_key" "pk" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+resource "aws_key_pair" "vpn" {
+  key_name   = "vpnKey"           
+  public_key = tls_private_key.pk.public_key_openssh
+  provisioner "local-exec" {      
+  command = "echo '${tls_private_key.pk.private_key_pem}' > ./keys/vpnKey.pem"
+  }
+}
 
 module "vpn" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   version                = "~> 3.0"
   name                   = "${local.name}-vpn"
-  ami                    = local.ami
+  ami                    = "${data.aws_ami.ubuntu.id}"
   instance_type          = local.instance_type
-  key_name               = local.key_name
+  key_name               = aws_key_pair.vpn.key_name
   vpc_security_group_ids = [aws_security_group.pritunl-sg.id]
   subnet_id              = element(module.vpc.public_subnets, 0)
   iam_instance_profile   = resource.aws_iam_instance_profile.dev-resources-iam-profile.name
@@ -18,6 +46,7 @@ module "vpn" {
   tags = {
     Terraform   = local.Terraform
     Environment = local.Environment
+    Owner       = local.Owner
   }
 }
 
@@ -30,11 +59,11 @@ module "vpn" {
 
 
 resource "aws_iam_instance_profile" "dev-resources-iam-profile" {
-name = "ec2_profile"
+name = "my_app_ec2_profile"
 role = aws_iam_role.dev-resources-iam-role.name
 }
 resource "aws_iam_role" "dev-resources-iam-role" {
-name        = "dev-ssm-role"
+name        = "my_app_dev-ssm-role"
 description = "The role for the developer resources EC2"
 assume_role_policy = <<EOF
 {
@@ -111,7 +140,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.18.1"
 
-  name = "local.name"
+  name = local.name
   cidr = "10.0.0.0/16"
 
   azs             = ["${local.region}a", "${local.region}b"]
@@ -124,7 +153,7 @@ module "vpc" {
   tags = {
     Terraform   = local.Terraform
     Environment = local.Environment
-    Owner       = "${local.name}-vpc"
+    Owner       = local.Owner
   }
 }
 
