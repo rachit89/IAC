@@ -21,7 +21,7 @@ module "vpn" {
 }
 
 
-################ security group for pritunl ######################
+################ Instance Profile for pritunl ######################
 
 
 resource "aws_iam_instance_profile" "dev-resources-iam-profile" {
@@ -49,6 +49,11 @@ resource "aws_iam_role_policy_attachment" "dev-resources-ssm-policy" {
 role       = aws_iam_role.dev-resources-iam-role.name
 policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
+
+
+
+################ security group for pritunl ######################
 
 
 

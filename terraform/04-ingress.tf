@@ -164,6 +164,9 @@ module "route53-record" {
   }
 
 
+
+
+
 ########## Creating Record for VPN In Route53 #############################
 
 

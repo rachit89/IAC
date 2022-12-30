@@ -1,3 +1,6 @@
+###################### The bucket and dynamo Table configured for backend #########################
+
+
 terraform {
   backend "s3" {
     bucket         = "rachit-tfstate"

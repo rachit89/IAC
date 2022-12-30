@@ -1,10 +1,12 @@
+###################### The Local Variables Used in the given Code ########################
+
+
 locals {
 
   Environment          = "dev"
   Terraform            = "true"
   Owner                = "RACHIT"
   name                 = "my-app"
- ## ami                  = "ami-0530ca8899fac469f"
   instance_type        = "t3a.small"
   instance-size        = "t3a.medium"
   iam_instance_profile = aws_iam_instance_profile.dev-resources-iam-profile.name
@@ -12,8 +14,7 @@ locals {
   zone_id              = "Z04396102CK6SZVB04SXD"
   zone_id_alb          = "Z1H1FL5HABSF5"
   region               = "us-west-2"                 
-  certificate_arn      = "arn:aws:acm:us-west-2:421320058418:certificate/73b9c44b-3865-4f0a-b508-dc118857ae2e"
- ## image_id             = "ami-0a140e1d86b5d6a6b"                                                                         
+  certificate_arn      = "arn:aws:acm:us-west-2:421320058418:certificate/73b9c44b-3865-4f0a-b508-dc118857ae2e"                                                                      
   name_prefix          = "myapp"
   host_headers         = "myappvpn.rtd.squareops.co.in"
   min_size             = 2
