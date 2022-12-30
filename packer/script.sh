@@ -5,7 +5,7 @@ sudo apt autoclean
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo useradd -m app -s /bin/bash
 sudo passwd -d app
-echo 'app ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo
+echo 'app ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/app
 sudo mkdir /app
 sudo chown app:app /app
 sudo apt install wget nodejs collectd net-tools awscli -y
