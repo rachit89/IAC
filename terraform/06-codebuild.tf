@@ -27,8 +27,8 @@ resource "aws_iam_role_policy" "example" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:logs:us-west-2:421320058418:log-group:/aws/codebuild/local.name",
-                "arn:aws:logs:us-west-2:421320058418:log-group:/aws/codebuild/local.name:*"
+                "arn:aws:logs:us-west-2:421320058418:log-group:/aws/codebuild/${local.name}",
+                "arn:aws:logs:us-west-2:421320058418:log-group:/aws/codebuild/${local.name}:*"
             ],
             "Action": [
                 "logs:CreateLogGroup",
@@ -52,8 +52,8 @@ resource "aws_iam_role_policy" "example" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:s3:::rachit-squareops",
-                "arn:aws:s3:::rachit-squareops/*"
+                "arn:aws:s3:::${aws_s3_bucket.codepipeline_bucket.id}",
+                "arn:aws:s3:::${aws_s3_bucket.codepipeline_bucket.id}/*"
             ],
             "Action": [
                 "s3:PutObject",
@@ -71,7 +71,7 @@ resource "aws_iam_role_policy" "example" {
                 "codebuild:BatchPutCodeCoverages"
             ],
             "Resource": [
-                "arn:aws:codebuild:us-west-2:421320058418:report-group/local.name-*"
+                "arn:aws:codebuild:us-west-2:421320058418:report-group/${local.name}-*"
             ]
         },
         {
@@ -92,8 +92,8 @@ resource "aws_iam_role_policy" "example" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:logs:us-west-2:421320058418:log-group:myappMERN",
-                "arn:aws:logs:us-west-2:421320058418:log-group:myappMERN:*"
+                "arn:aws:logs:us-west-2:421320058418:log-group:${local.group_name}",
+                "arn:aws:logs:us-west-2:421320058418:log-group:${local.group_name}:*"
             ],
             "Action": [
                 "logs:CreateLogGroup",

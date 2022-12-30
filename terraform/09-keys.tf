@@ -40,13 +40,6 @@ resource "aws_key_pair" "app" {
 
 
 
-
-
-
-
-
-
-
 ##################################### Creating Keys for Mongo Instances #####################################
 
 

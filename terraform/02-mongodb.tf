@@ -1,20 +1,5 @@
 ###################### LAUNCHING INSTANCES FOR MONGODB  ######################
 
-resource "tls_private_key" "mongo" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-resource "aws_key_pair" "db" {
-  key_name   = "mongo" 
-  public_key = tls_private_key.mongo.public_key_openssh
-  provisioner "local-exec" {       
-  command = "echo '${tls_private_key.mongo.private_key_pem}' > ./keys/mongo.pem"
-  }
-}
-
-
-
-
 
 
 module "myapp_ec2_instance" {
