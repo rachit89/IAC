@@ -1,23 +1,22 @@
 ###################### LAUNCHING INSTANCES FOR MONGODB  ######################
 
 
-
 module "myapp_ec2_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 3.0"
 
-  for_each = toset(["mongo0", "mongo1", "mongo2"])
+  for_each = toset(["mongo-0", "mongo-1", "mongo-2"])
 
   name = "${local.name}-${each.key}"
 
-  ami                    = "${data.aws_ami.ubuntu.id}"
+  ami                    = data.aws_ami.ubuntu.id
   instance_type          = local.instance-size
   key_name               = aws_key_pair.db.key_name
   monitoring             = true
   vpc_security_group_ids = [resource.aws_security_group.myapp-sg-mongo.id]
   subnet_id              = module.vpc.private_subnets[0]
 
-  user_data              = <<EOF
+  user_data = <<EOF
 #!/bin/bash
 apt-get update
 wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -

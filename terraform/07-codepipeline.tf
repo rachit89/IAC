@@ -56,8 +56,8 @@ resource "aws_codepipeline" "codepipeline" {
       version         = "1"
 
       configuration = {
-      ApplicationName = resource.aws_codedeploy_app.app.name
-      DeploymentGroupName = resource.aws_codedeploy_deployment_group.app-deploy-group.deployment_group_name
+        ApplicationName     = resource.aws_codedeploy_app.app.name
+        DeploymentGroupName = resource.aws_codedeploy_deployment_group.app-deploy-group.deployment_group_name
       }
     }
   }

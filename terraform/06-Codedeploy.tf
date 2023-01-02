@@ -4,10 +4,10 @@ resource "aws_codedeploy_app" "app" {
 }
 
 resource "aws_codedeploy_deployment_group" "app-deploy-group" {
-  app_name               = resource.aws_codedeploy_app.app.name
-  deployment_group_name  = aws_codedeploy_app.app.name
-  service_role_arn       = resource.aws_iam_role.codedeploy_role.arn
-  autoscaling_groups     = [module.asg.autoscaling_group_name]
+  app_name              = resource.aws_codedeploy_app.app.name
+  deployment_group_name = aws_codedeploy_app.app.name
+  service_role_arn      = resource.aws_iam_role.codedeploy_role.arn
+  autoscaling_groups    = [module.asg.autoscaling_group_name]
 }
 resource "aws_iam_role" "codedeploy_role" {
   name = "${local.name}-deploy-role"

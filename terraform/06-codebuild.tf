@@ -142,7 +142,7 @@ resource "aws_codebuild_project" "example" {
     type            = "GITHUB"
     location        = local.location
     git_clone_depth = 1
- 
+
     git_submodules_config {
       fetch_submodules = true
     }

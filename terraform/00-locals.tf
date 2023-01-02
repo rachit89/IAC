@@ -13,8 +13,7 @@ locals {
   key_name             = "rachit1"
   zone_id              = "Z04396102CK6SZVB04SXD"
   zone_id_alb          = "Z1H1FL5HABSF5"
-  region               = "us-west-2"                 
-  certificate_arn      = "arn:aws:acm:us-west-2:421320058418:certificate/73b9c44b-3865-4f0a-b508-dc118857ae2e"                                                                      
+  region               = "us-west-2"
   name_prefix          = "myapp"
   host_headers         = "myappvpn.rtd.squareops.co.in"
   min_size             = 2
@@ -30,6 +29,7 @@ locals {
   image                = "aws/codebuild/standard:6.0"
   type                 = "LINUX_CONTAINER"
   compute_platform     = "Server"
+  domain_name          = "rtd.squareops.co.in"
   user_data            = <<EOF
   #!/bin/bash
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-rachit -s
