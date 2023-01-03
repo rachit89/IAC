@@ -30,8 +30,16 @@ locals {
   type                 = "LINUX_CONTAINER"
   compute_platform     = "Server"
   domain_name          = "rtd.squareops.co.in"
+  evaluation_periods   = "5"
+  statistic_period     = "60"
+  endpoint             = "rachit.maheshwari@squareops.com"
+  threshold            = "50"
+  threshold_unhealthy  = "0"
+  # mongo0	       = (element(module.myapp_ec2_instance,0)).id
+  # mongo1               = (element(module.myapp_ec2_instance,1)).id
+  # mongo2               = (element(module.myapp_ec2_instance,2)).id
   user_data            = <<EOF
-  #!/bin/bash
+#!/bin/bash
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-rachit -s
 sudo systemctl restart amazon-cloudwatch-agent.service
 EOF

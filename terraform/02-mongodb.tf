@@ -24,6 +24,15 @@ echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb
 apt-get update
 sudo apt install mongodb-org -y
 sudo systemctl start mongod
+sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip -O AmazonCloudWatchAgent.zip
+sudo apt install -y unzip
+sudo unzip -o AmazonCloudWatchAgent.zip
+sudo ./install.sh
+rm -rf AmazonCloudWatchAgent.zip
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:AmazonCloudWatch-rachit
+sudo systemctl start amazon-cloudwatch-agent.service
+sudo systemctl enable amazon-cloudwatch-agent.service
+sudo systemctl status amazon-cloudwatch-agent.service
 EOF
 
 
@@ -35,6 +44,31 @@ EOF
   }
 }
 
+
+resource "aws_iam_role" "mongodb" {
+  name = "${local.name}-mongodb"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "ssm-policy_mongo" {
+  role       = aws_iam_role.mongodb.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+}
 
 
 

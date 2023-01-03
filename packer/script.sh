@@ -13,11 +13,11 @@ sudo npm install -g npm@latest
 sudo npm install -g pm2@latest
 
 #installing codedeploy
-
+               
 sudo apt update
 sudo apt install ruby-full -y
-sudo wget https://aws-codedeploy-us-west-2.s3.us-west-2.amazonaws.com/latest/install
 cd /home/ubuntu
+sudo wget https://aws-codedeploy-us-west-2.s3.us-west-2.amazonaws.com/latest/install
 sudo chmod +x ./install
 sudo ./install auto > /tmp/logfile
 sudo systemctl start codedeploy-agent
@@ -36,3 +36,4 @@ rm -rf AmazonCloudWatchAgent.zip
 sudo systemctl start amazon-cloudwatch-agent.service
 sudo systemctl enable amazon-cloudwatch-agent.service
 sudo systemctl status amazon-cloudwatch-agent.service
+cd /home/ubuntu

@@ -90,6 +90,41 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "resourceType": "AWS::EC2::Instance",
                         "stat": "Average"
                     },
+		    {
+                        "metricName": "mem_used",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "mem_total",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	  	    {
+                        "metricName": "mem_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	  	    {
+                        "metricName": "cpu_usage_idle",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_system",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "disk_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	  	    {
+                        "metricName": "TCPv4 Connections Established",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
                     {
                         "metricName": "NetworkIn",
                         "resourceType": "AWS::EC2::Instance",
@@ -224,8 +259,298 @@ resource "aws_cloudwatch_dashboard" "main" {
                 	"title": "${module.alb.lb_dns_name}"
 	    }
             },
-
-	    {
+            {
+        		 "type":"metric",
+        		 "x":0,
+        		 "y":0,
+         		 "width":12,
+        		 "height":6,
+        		 "properties":{
+           		 "metrics":[
+               [
+                  	 "AWS/EC2",
+                	 "CPUUtilization",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-0.id}"
+               ],
+               [
+                 	 "AWS/EC2",
+                 	 "NetworkIn",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"NetworkIn",
+                   	 "period":60,
+                  	 "stat":"Maximum"
+                  }
+                ],
+                [
+                 	 "AWS/EC2",
+                 	 "NetworkOut",
+                	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"NetworkOut",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSReadOps",
+                	 "InstanceId",
+                  	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"EBSReadOps",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSWriteOps",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  {
+                    	 "yAxis":"right",
+                   	 "label":"EBSWriteOps",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSReadBytes",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  {
+                   	 "yAxis":"right",
+                    	 "label":"EBSReadBytes",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSWriteBytes",
+                  	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"EBSWriteBytes",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ]
+                ],
+                   	 "period":60,
+                   	 "stat":"Average",
+                   	 "region":"${local.region}",
+                   	 "title":"Parameters of Mongo-0 Db",
+                   	 "liveData": true,
+                   	 "legend": {
+                         "position": "right"
+         }
+      }
+      },
+      {
+        		 "type":"metric",
+        		 "x":0,
+        		 "y":0,
+         		 "width":12,
+        		 "height":6,
+        		 "properties":{
+           		 "metrics":[
+               [
+                  	 "AWS/EC2",
+                	 "CPUUtilization",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-1.id}"
+               ],
+               [
+                 	 "AWS/EC2",
+                 	 "NetworkIn",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"NetworkIn",
+                   	 "period":60,
+                  	 "stat":"Maximum"
+                  }
+                ],
+                [
+                 	 "AWS/EC2",
+                 	 "NetworkOut",
+                	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"NetworkOut",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSReadOps",
+                	 "InstanceId",
+                  	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"EBSReadOps",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSWriteOps",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  {
+                    	 "yAxis":"right",
+                   	 "label":"EBSWriteOps",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSReadBytes",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  {
+                   	 "yAxis":"right",
+                    	 "label":"EBSReadBytes",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSWriteBytes",
+                  	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"EBSWriteBytes",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ]
+                ],
+                   	 "period":60,
+                   	 "stat":"Average",
+                   	 "region":"${local.region}",
+                   	 "title":"Parameters of Mongo-1 Db",
+                   	 "liveData": true,
+                   	 "legend": {
+                         "position": "right"
+         }
+      }
+      },
+      {
+        		 "type":"metric",
+        		 "x":0,
+        		 "y":0,
+         		 "width":12,
+        		 "height":6,
+        		 "properties":{
+           		 "metrics":[
+               [
+                  	 "AWS/EC2",
+                	 "CPUUtilization",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-2.id}"
+               ],
+               [
+                 	 "AWS/EC2",
+                 	 "NetworkIn",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"NetworkIn",
+                   	 "period":60,
+                  	 "stat":"Maximum"
+                  }
+                ],
+                [
+                 	 "AWS/EC2",
+                 	 "NetworkOut",
+                	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"NetworkOut",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSReadOps",
+                	 "InstanceId",
+                  	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"EBSReadOps",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSWriteOps",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  {
+                    	 "yAxis":"right",
+                   	 "label":"EBSWriteOps",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSReadBytes",
+                 	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  {
+                   	 "yAxis":"right",
+                    	 "label":"EBSReadBytes",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ],
+		[
+                 	 "AWS/EC2",
+                 	 "EBSWriteBytes",
+                  	 "InstanceId",
+                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  {
+                   	 "yAxis":"right",
+                   	 "label":"EBSWriteBytes",
+                   	 "period":60,
+                   	 "stat":"Maximum"
+                  }
+                ]
+                ],
+                   	 "period":60,
+                   	 "stat":"Average",
+                   	 "region":"${local.region}",
+                   	 "title":"Parameters of Mongo-2 Db",
+                   	 "liveData": true,
+                   	 "legend": {
+                         "position": "right"
+         }
+      }
+      },
+      {
             "type": "explorer",
             "x": 0,
             "y": 6,
@@ -257,16 +582,67 @@ resource "aws_cloudwatch_dashboard" "main" {
                         "metricName": "NetworkOut",
                         "resourceType": "AWS::EC2::Instance",
                         "stat": "Average"
+                    },
+		    {
+                        "metricName": "mem_used",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "mem_total",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	  	    {
+                        "metricName": "mem_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Read Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Write Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Write Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "PhysicalDisk Disk Reads Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	   	    {
+                        "metricName": "disk_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_idle",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_system",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
                     }
+
                 ],
                 	"aggregateBy": {
-                    	"key": "SecurityGroupId",
+                    	"key": "InstanceId",
                     	"func": "AVG"
                 },
                 	"labels": [
                     {	
-                        "key": "SecurityGroupId",
-                        "value": "${aws_security_group.myapp-sg-mongo.id}"
+                        "key": "InstanceId",
+                        "value": "${module.myapp_ec2_instance.mongo-0.id}"
                     }
                 ],
                 	"widgetOptions": {
@@ -280,9 +656,228 @@ resource "aws_cloudwatch_dashboard" "main" {
                 },
                 	"period": 10,
                 	"splitBy": "",
-                	"title": "Parameters Of Mongo Db"
+                	"title": "${module.myapp_ec2_instance.mongo-0.id}"
+               }
+            },
+	    {
+           		 "type": "explorer",
+           		 "x": 0,
+           		 "y": 6,
+           		 "width": 24,
+           		 "height": 15,
+           		 "properties": {
+               		 "metrics": [
+                    {
+                        "metricName": "CPUUtilization",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "NetworkIn",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "DiskReadOps",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "DiskWriteOps",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "NetworkOut",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "mem_used",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "mem_total",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	  	    {
+                        "metricName": "mem_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Read Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Write Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Write Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "PhysicalDisk Disk Reads Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	   	    {
+                        "metricName": "disk_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_idle",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_system",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    }
+
+                ],
+                	"aggregateBy": {
+                    	"key": "InstanceId",
+                    	"func": "AVG"
+                },
+                	"labels": [
+                    {	
+                        "key": "InstanceId",
+                        "value": "${module.myapp_ec2_instance.mongo-1.id}"
+                    }
+                ],
+                	"widgetOptions": {
+                    	"legend": {
+                        "position": "bottom"
+                    },
+                    	"view": "timeSeries",
+                    	"stacked": false,
+                    	"rowsPerPage": 40,
+                    	"widgetsPerRow": 3
+                },
+                	"period": 10,
+                	"splitBy": "",
+                	"title": "${module.myapp_ec2_instance.mongo-1.id}"
+               }
+            },
+	    {
+           		 "type": "explorer",
+           		 "x": 0,
+           		 "y": 6,
+           		 "width": 24,
+           		 "height": 15,
+           		 "properties": {
+               		 "metrics": [
+                    {
+                        "metricName": "CPUUtilization",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "NetworkIn",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "DiskReadOps",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "DiskWriteOps",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+                    {
+                        "metricName": "NetworkOut",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "mem_used",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "mem_total",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	  	    {
+                        "metricName": "mem_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Read Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Write Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "PhysicalDisk Disk Write Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	            {
+                        "metricName": "PhysicalDisk Disk Reads Bytes/sec",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+	   	    {
+                        "metricName": "disk_used_percent",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_idle",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    },
+		    {
+                        "metricName": "cpu_usage_system",
+                        "resourceType": "AWS::EC2::Instance",
+                        "stat": "Average"
+                    }
+
+                ],
+                	"aggregateBy": {
+                    	"key": "InstanceId",
+                    	"func": "AVG"
+                },
+                	"labels": [
+                    {	
+                        "key": "InstanceId",
+                        "value": "${module.myapp_ec2_instance.mongo-2.id}"
+                    }
+                ],
+                	"widgetOptions": {
+                    	"legend": {
+                        "position": "bottom"
+                    },
+                    	"view": "timeSeries",
+                    	"stacked": false,
+                    	"rowsPerPage": 40,
+                    	"widgetsPerRow": 3
+                },
+                	"period": 10,
+                	"splitBy": "",
+                	"title": "${module.myapp_ec2_instance.mongo-2.id}"
                }
             }
+
 
 ]
 }
