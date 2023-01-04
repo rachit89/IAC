@@ -29,7 +29,7 @@ resource "aws_sns_topic_subscription" "httpcode_lb_5xx_count" {
 }
 
 resource "aws_sns_topic" "target_response_time_average" {
-  name = "${local.name}-target_response_time_average"
+  name = "${local.name}-target_response_time"
 }
 
 resource "aws_sns_topic_subscription" "target_response_time_average" {
@@ -140,108 +140,108 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_hosts" {
 # ########################## ALARMS FOR MONGO DB #####################
 
 
-# resource "aws_sns_topic" "CPU0" {
-#   name = "mongo-0-CPUhigh"
-# }
+ resource "aws_sns_topic" "CPU0" {
+  name = "mongo-0-CPUhigh"
+}
 
-# resource "aws_sns_topic_subscription" "CPU0" {
-#   topic_arn = aws_sns_topic.CPU0.arn
-#   protocol  = "email"
-#   endpoint  = local.endpoint
+resource "aws_sns_topic_subscription" "CPU0" {
+  topic_arn = aws_sns_topic.CPU0.arn
+  protocol  = "email"
+  endpoint  = local.endpoint
 
-#   depends_on = [
-#     aws_sns_topic.CPU0
-#   ]
-# }
-
-
-# resource "aws_sns_topic" "CPU1" {
-#   name = "mongo-1-CPUhigh"
-# }
-
-# resource "aws_sns_topic_subscription" "CPU1" {
-#   topic_arn = aws_sns_topic.CPU1.arn
-#   protocol  = "email"
-#   endpoint  = local.endpoint
-
-#   depends_on = [
-#     aws_sns_topic.CPU1
-#   ]
-# }
-
-# resource "aws_sns_topic" "CPU2" {
-#   name = "mongo-2-CPUhigh"
-# }
-
-# resource "aws_sns_topic_subscription" "CPU2" {
-#   topic_arn = aws_sns_topic.CPU2.arn
-#   protocol  = "email"
-#   endpoint  = local.endpoint
-
-#   depends_on = [
-#     aws_sns_topic.CPU2
-#   ]
-# }
-
-# resource "aws_cloudwatch_metric_alarm" "CPU_Utilization0" {
-#   # defining the name of AWS cloudwatch alarm
-#   alarm_name          = "mongo-0-CPU_high"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-#   evaluation_periods  = "2"
-#   metric_name         = "CPUUtilization0"
-#   namespace           = "AWS/EC2"
-#   period              = local.statistic_period
-#   statistic           = "Average"
-#   threshold           = "70"
-#   alarm_description   = "This metric monitors ec2 cpu utilization of local.mongo0 exceeding 70%"
-#   alarm_actions       = ["${aws_sns_topic.CPU0.arn}"]
-#   ok_actions          = ["${aws_sns_topic.CPU0.arn}"]
+  depends_on = [
+    aws_sns_topic.CPU0
+  ]
+}
 
 
-#   dimensions = {
-#     InstanceId = local.mongo0
-#   }
-# }
+resource "aws_sns_topic" "CPU1" {
+  name = "mongo-1-CPUhigh"
+}
+
+resource "aws_sns_topic_subscription" "CPU1" {
+  topic_arn = aws_sns_topic.CPU1.arn
+  protocol  = "email"
+  endpoint  = local.endpoint
+
+  depends_on = [
+    aws_sns_topic.CPU1
+  ]
+}
+
+resource "aws_sns_topic" "CPU2" {
+  name = "mongo-2-CPUhigh"
+}
+
+resource "aws_sns_topic_subscription" "CPU2" {
+  topic_arn = aws_sns_topic.CPU2.arn
+  protocol  = "email"
+  endpoint  = local.endpoint
+
+  depends_on = [
+    aws_sns_topic.CPU2
+  ]
+}
+
+resource "aws_cloudwatch_metric_alarm" "CPU_Utilization0" {
+  # defining the name of AWS cloudwatch alarm
+  alarm_name          = "${local.mongodb_instance_0}-CPU_high"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = local.statistic_period
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric monitors ec2 cpu utilization of mongo0 exceeding 70%"
+  alarm_actions       = ["${aws_sns_topic.CPU0.arn}"]
+  ok_actions          = ["${aws_sns_topic.CPU0.arn}"]
 
 
-# resource "aws_cloudwatch_metric_alarm" "CPUUtilization1" {
-#   # defining the name of AWS cloudwatch alarm
-#   alarm_name          = "module.myapp_ec2_instance.mongo-1.id-CPU_high"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-#   evaluation_periods  = "2"
-#   metric_name         = "CPUUtilization1"
-#   namespace           = "AWS/EC2"
-#   period              = local.statistic_period
-#   statistic           = "Average"
-#   threshold           = "70"
-#   alarm_description   = "This metric monitors ec2 cpu utilization of local.mongo1 exceeding 70%"
-#   alarm_actions       = ["${aws_sns_topic.CPU1.arn}"]
-#   ok_actions          = ["${aws_sns_topic.CPU1.arn}"]
+  dimensions = {
+    InstanceId = "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}"
+  }
+}
 
 
-#   dimensions = {
-#     InstanceId = local.mongo1
-#   }
-# }
+resource "aws_cloudwatch_metric_alarm" "CPUUtilization1" {
+  # defining the name of AWS cloudwatch alarm
+  alarm_name          = "${local.mongodb_instance_1}-CPU_high"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = local.statistic_period
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric monitors ec2 cpu utilization of mongo1 exceeding 70%"
+  alarm_actions       = ["${aws_sns_topic.CPU1.arn}"]
+  ok_actions          = ["${aws_sns_topic.CPU1.arn}"]
 
 
-# resource "aws_cloudwatch_metric_alarm" "CPUUtilization2" {
-#   # defining the name of AWS cloudwatch alarm
-#   alarm_name          = "mongo-2-CPU_high"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-#   evaluation_periods  = "2"
-#   metric_name         = "CPUUtilization2"
-#   namespace           = "AWS/EC2"
-#   period              = local.statistic_period
-#   statistic           = "Average"
-#   threshold           = "70"
-#   alarm_description   = "This metric monitors ec2 cpu utilization of local.mongo2 exceeding 70%"
-#   alarm_actions       = ["${aws_sns_topic.CPU2.arn}"]
-#   ok_actions          = ["${aws_sns_topic.CPU2.arn}"]
+  dimensions = {
+    InstanceId = "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}"
+  }
+}
 
 
-#   dimensions = {
-#     InstanceId = local.mongo2
-#   }
-# }
+resource "aws_cloudwatch_metric_alarm" "CPUUtilization2" {
+  # defining the name of AWS cloudwatch alarm
+  alarm_name          = "${local.mongodb_instance_2}-CPU_high"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = local.statistic_period
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric monitors ec2 cpu utilization of mongo2 exceeding 70%"
+  alarm_actions       = ["${aws_sns_topic.CPU2.arn}"]
+  ok_actions          = ["${aws_sns_topic.CPU2.arn}"]
+
+
+  dimensions = {
+    InstanceId = "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}"
+  }
+}
 

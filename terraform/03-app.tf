@@ -57,7 +57,7 @@ module "asg" {
 
 resource "aws_autoscaling_policy" "asg-policy" {
   count                     = 1
-  name                      = "${local.name}asg-cpu-policy"
+  name                      = "${local.name}-asg-cpu-policy"
   autoscaling_group_name    = module.asg.autoscaling_group_name
   estimated_instance_warmup = 60
   policy_type               = "TargetTrackingScaling"
@@ -68,6 +68,7 @@ resource "aws_autoscaling_policy" "asg-policy" {
     target_value = 50.0
   }
 }
+
 
 ################### Security Group for NodeApp Instance  ########################
 
