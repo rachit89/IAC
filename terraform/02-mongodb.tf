@@ -15,6 +15,7 @@ module "myapp_ec2_instance" {
   monitoring             = true
   vpc_security_group_ids = [resource.aws_security_group.myapp-sg-mongo.id]
   subnet_id              = module.vpc.private_subnets[0]
+  iam_instance_profile   = aws_iam_instance_profile.mongodb_profile.name
 
   user_data = <<EOF
 #!/bin/bash
@@ -29,7 +30,8 @@ sudo apt install -y unzip
 sudo unzip -o AmazonCloudWatchAgent.zip
 sudo ./install.sh
 rm -rf AmazonCloudWatchAgent.zip
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:AmazonCloudWatch-rachit
+sudo apt install collectd -y
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:AmazonCloudWatch-my-app-mongodb
 sudo systemctl start amazon-cloudwatch-agent.service
 sudo systemctl enable amazon-cloudwatch-agent.service
 sudo systemctl status amazon-cloudwatch-agent.service
@@ -70,6 +72,18 @@ resource "aws_iam_role_policy_attachment" "ssm-policy_mongo" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
 }
 
+
+resource "aws_iam_role_policy_attachment" "instance-access" {
+  role       = aws_iam_role.mongodb.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+
+
+resource "aws_iam_instance_profile" "mongodb_profile" {
+  name = "${local.name}-mongodb-instance-profile"
+  role = aws_iam_role.mongodb.name
+}
 
 
 #################### Security Group of Mongo Instances  #######################

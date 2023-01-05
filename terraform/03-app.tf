@@ -136,6 +136,10 @@ resource "aws_iam_role_policy_attachment" "ssm-policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch-asg" {
+  role       = aws_iam_role.instance-role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
 
 resource "aws_iam_role_policy" "instance-profile" {
   name = "${local.name}-deploy-policy"

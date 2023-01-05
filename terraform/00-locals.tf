@@ -35,10 +35,10 @@ locals {
   endpoint             = "rachit.maheshwari@squareops.com"
   threshold            = "50"
   threshold_unhealthy  = "0"
-  mongodb_instance_0   = "mongo-0" 
-  mongodb_instance_1   = "mongo-1" 
+  mongodb_instance_0   = "mongo-0"
+  mongodb_instance_1   = "mongo-1"
   mongodb_instance_2   = "mongo-2"
-  user_data = <<EOF
+  user_data            = <<EOF
 #!/bin/bash
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-rachit -s
 sudo systemctl restart amazon-cloudwatch-agent.service

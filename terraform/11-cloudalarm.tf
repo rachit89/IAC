@@ -140,7 +140,7 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_hosts" {
 # ########################## ALARMS FOR MONGO DB #####################
 
 
- resource "aws_sns_topic" "CPU0" {
+resource "aws_sns_topic" "CPU0" {
   name = "mongo-0-CPUhigh"
 }
 
@@ -182,6 +182,51 @@ resource "aws_sns_topic_subscription" "CPU2" {
     aws_sns_topic.CPU2
   ]
 }
+
+resource "aws_sns_topic" "mem_used_percent_mongo0" {
+  name = "mongo_0_mem_used_percent"
+}
+
+resource "aws_sns_topic_subscription" "mem_used_percent_mongo0" {
+  topic_arn = aws_sns_topic.mem_used_percent_mongo0.arn
+  protocol  = "email"
+  endpoint  = local.endpoint
+
+  depends_on = [
+    aws_sns_topic.mem_used_percent_mongo0
+  ]
+}
+
+
+resource "aws_sns_topic" "mem_used_percent_mongo1" {
+  name = "mongo_1_mem_used_percemt"
+}
+
+resource "aws_sns_topic_subscription" "mem_used_percent_mongo1" {
+  topic_arn = aws_sns_topic.mem_used_percent_mongo1.arn
+  protocol  = "email"
+  endpoint  = local.endpoint
+
+  depends_on = [
+    aws_sns_topic.mem_used_percent_mongo1
+  ]
+}
+
+
+resource "aws_sns_topic" "mem_used_percent_mongo2" {
+  name = "mongo_2_mem_used"
+}
+
+resource "aws_sns_topic_subscription" "mem_used_percent_mongo2" {
+  topic_arn = aws_sns_topic.mem_used_percent_mongo2.arn
+  protocol  = "email"
+  endpoint  = local.endpoint
+
+  depends_on = [
+    aws_sns_topic.mem_used_percent_mongo2
+  ]
+}
+
 
 resource "aws_cloudwatch_metric_alarm" "CPU_Utilization0" {
   # defining the name of AWS cloudwatch alarm
@@ -238,6 +283,76 @@ resource "aws_cloudwatch_metric_alarm" "CPUUtilization2" {
   alarm_description   = "This metric monitors ec2 cpu utilization of mongo2 exceeding 70%"
   alarm_actions       = ["${aws_sns_topic.CPU2.arn}"]
   ok_actions          = ["${aws_sns_topic.CPU2.arn}"]
+
+
+  dimensions = {
+    InstanceId = "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}"
+  }
+}
+
+
+
+resource "aws_cloudwatch_metric_alarm" "mem_used_percent0" {
+  # defining the name of AWS cloudwatch alarm
+  alarm_name          = "${local.mongodb_instance_2}-memory-high"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "mem_used_percent"
+  namespace           = "AWS/EC2"
+  period              = local.statistic_period
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric monitors ec2 mem_used_percent of mongo0 exceeding 70%"
+  alarm_actions       = ["${aws_sns_topic.mem_used_percent_mongo0.arn}"]
+  ok_actions          = ["${aws_sns_topic.mem_used_percent_mongo0.arn}"]
+
+
+  dimensions = {
+    InstanceId = "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}"
+  }
+}
+
+
+
+
+
+resource "aws_cloudwatch_metric_alarm" "mem_used_percent1" {
+  # defining the name of AWS cloudwatch alarm
+  alarm_name          = "${local.mongodb_instance_2}-memory-high"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "mem_used_percent"
+  namespace           = "AWS/E"
+  period              = local.statistic_period
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric monitors ec2 mem_used_percent of mongo1 exceeding 70%"
+  alarm_actions       = ["${aws_sns_topic.mem_used_percent_mongo1.arn}"]
+  ok_actions          = ["${aws_sns_topic.mem_used_percent_mongo1.arn}"]
+
+
+  dimensions = {
+    InstanceId = "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}"
+  }
+}
+
+
+
+
+
+resource "aws_cloudwatch_metric_alarm" "mem_used_percent2" {
+  # defining the name of AWS cloudwatch alarm
+  alarm_name          = "${local.mongodb_instance_2}-memory-high"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "mem_used_percent"
+  namespace           = "AWS/EC2"
+  period              = local.statistic_period
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric monitors ec2 mem_used_percent of mongo2 exceeding 70%"
+  alarm_actions       = ["${aws_sns_topic.mem_used_percent_mongo2.arn}"]
+  ok_actions          = ["${aws_sns_topic.mem_used_percent_mongo2.arn}"]
 
 
   dimensions = {

@@ -271,13 +271,13 @@ resource "aws_cloudwatch_dashboard" "main" {
                   	 "AWS/EC2",
                 	 "CPUUtilization",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-0.id}"
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}"
                ],
                [
                  	 "AWS/EC2",
                  	 "NetworkIn",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"NetworkIn",
@@ -289,7 +289,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "NetworkOut",
                 	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"NetworkOut",
@@ -301,7 +301,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSReadOps",
                 	 "InstanceId",
-                  	 "${module.myapp_ec2_instance.mongo-0.id}",
+                  	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"EBSReadOps",
@@ -313,7 +313,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSWriteOps",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}",
                   {
                     	 "yAxis":"right",
                    	 "label":"EBSWriteOps",
@@ -325,7 +325,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSReadBytes",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}",
                   {
                    	 "yAxis":"right",
                     	 "label":"EBSReadBytes",
@@ -337,7 +337,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSWriteBytes",
                   	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-0.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"EBSWriteBytes",
@@ -368,13 +368,13 @@ resource "aws_cloudwatch_dashboard" "main" {
                   	 "AWS/EC2",
                 	 "CPUUtilization",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-1.id}"
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}"
                ],
                [
                  	 "AWS/EC2",
                  	 "NetworkIn",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"NetworkIn",
@@ -386,7 +386,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "NetworkOut",
                 	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"NetworkOut",
@@ -398,7 +398,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSReadOps",
                 	 "InstanceId",
-                  	 "${module.myapp_ec2_instance.mongo-1.id}",
+                  	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"EBSReadOps",
@@ -410,7 +410,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSWriteOps",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}",
                   {
                     	 "yAxis":"right",
                    	 "label":"EBSWriteOps",
@@ -422,7 +422,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSReadBytes",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}",
                   {
                    	 "yAxis":"right",
                     	 "label":"EBSReadBytes",
@@ -434,7 +434,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSWriteBytes",
                   	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-1.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"EBSWriteBytes",
@@ -465,13 +465,13 @@ resource "aws_cloudwatch_dashboard" "main" {
                   	 "AWS/EC2",
                 	 "CPUUtilization",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-2.id}"
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}"
                ],
                [
                  	 "AWS/EC2",
                  	 "NetworkIn",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"NetworkIn",
@@ -483,7 +483,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "NetworkOut",
                 	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"NetworkOut",
@@ -495,7 +495,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSReadOps",
                 	 "InstanceId",
-                  	 "${module.myapp_ec2_instance.mongo-2.id}",
+                  	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"EBSReadOps",
@@ -507,7 +507,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSWriteOps",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                   {
                     	 "yAxis":"right",
                    	 "label":"EBSWriteOps",
@@ -519,7 +519,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSReadBytes",
                  	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                   {
                    	 "yAxis":"right",
                     	 "label":"EBSReadBytes",
@@ -531,7 +531,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                  	 "AWS/EC2",
                  	 "EBSWriteBytes",
                   	 "InstanceId",
-                 	 "${module.myapp_ec2_instance.mongo-2.id}",
+                 	 "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                   {
                    	 "yAxis":"right",
                    	 "label":"EBSWriteBytes",
@@ -543,7 +543,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                    	 "period":60,
                    	 "stat":"Average",
                    	 "region":"${local.region}",
-                   	 "title":"Parameters of Mongo-2 Db",
+                   	 "title": "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}",
                    	 "liveData": true,
                    	 "legend": {
                          "position": "right"
@@ -642,7 +642,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 	"labels": [
                     {	
                         "key": "InstanceId",
-                        "value": "${module.myapp_ec2_instance.mongo-0.id}"
+                        "value": "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}"
                     }
                 ],
                 	"widgetOptions": {
@@ -656,7 +656,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 },
                 	"period": 10,
                 	"splitBy": "",
-                	"title": "${module.myapp_ec2_instance.mongo-0.id}"
+                	"title": "${module.myapp_ec2_instance["${local.mongodb_instance_0}"].id}"
                }
             },
 	    {
@@ -751,7 +751,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 	"labels": [
                     {	
                         "key": "InstanceId",
-                        "value": "${module.myapp_ec2_instance.mongo-1.id}"
+                        "value": "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}"
                     }
                 ],
                 	"widgetOptions": {
@@ -765,7 +765,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 },
                 	"period": 10,
                 	"splitBy": "",
-                	"title": "${module.myapp_ec2_instance.mongo-1.id}"
+                	"title": "${module.myapp_ec2_instance["${local.mongodb_instance_1}"].id}"
                }
             },
 	    {
@@ -860,7 +860,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 	"labels": [
                     {	
                         "key": "InstanceId",
-                        "value": "${module.myapp_ec2_instance.mongo-2.id}"
+                        "value": "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}"
                     }
                 ],
                 	"widgetOptions": {
@@ -874,7 +874,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 },
                 	"period": 10,
                 	"splitBy": "",
-                	"title": "${module.myapp_ec2_instance.mongo-2.id}"
+                	"title": "${module.myapp_ec2_instance["${local.mongodb_instance_2}"].id}"
                }
             }
 
