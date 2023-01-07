@@ -5,7 +5,7 @@ module "vpn" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   version                = "~> 3.0"
   name                   = "${local.name}-vpn"
-  ami                    = "${data.aws_ami.ubuntu.id}"
+  ami                    = data.aws_ami.ubuntu.id
   instance_type          = local.instance_type
   key_name               = aws_key_pair.vpn.key_name
   vpc_security_group_ids = [aws_security_group.pritunl-sg.id]
@@ -25,13 +25,13 @@ module "vpn" {
 
 
 resource "aws_iam_instance_profile" "dev-resources-iam-profile" {
-name = "my_app_ec2_profile"
-role = aws_iam_role.dev-resources-iam-role.name
+  name = "my_app_ec2_profile"
+  role = aws_iam_role.dev-resources-iam-role.name
 }
 resource "aws_iam_role" "dev-resources-iam-role" {
-name        = "my_app_dev-ssm-role"
-description = "The role for the developer resources EC2"
-assume_role_policy = <<EOF
+  name               = "my_app_dev-ssm-role"
+  description        = "The role for the developer resources EC2"
+  assume_role_policy = <<EOF
 {
 "Version": "2012-10-17",
 "Statement": {
@@ -41,13 +41,13 @@ assume_role_policy = <<EOF
 }
 }
 EOF
-tags = {
-stack = "test"
-}
+  tags = {
+    stack = "test"
+  }
 }
 resource "aws_iam_role_policy_attachment" "dev-resources-ssm-policy" {
-role       = aws_iam_role.dev-resources-iam-role.name
-policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.dev-resources-iam-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 

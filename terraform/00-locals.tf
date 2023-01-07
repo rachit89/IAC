@@ -13,8 +13,7 @@ locals {
   key_name             = "rachit1"
   zone_id              = "Z04396102CK6SZVB04SXD"
   zone_id_alb          = "Z1H1FL5HABSF5"
-  region               = "us-west-2"                 
-  certificate_arn      = "arn:aws:acm:us-west-2:421320058418:certificate/73b9c44b-3865-4f0a-b508-dc118857ae2e"                                                                      
+  region               = "us-west-2"
   name_prefix          = "myapp"
   host_headers         = "myappvpn.rtd.squareops.co.in"
   min_size             = 2
@@ -30,8 +29,17 @@ locals {
   image                = "aws/codebuild/standard:6.0"
   type                 = "LINUX_CONTAINER"
   compute_platform     = "Server"
+  domain_name          = "rtd.squareops.co.in"
+  evaluation_periods   = "5"
+  statistic_period     = "60"
+  endpoint             = "rachit.maheshwari@squareops.com"
+  threshold            = "50"
+  threshold_unhealthy  = "0"
+  mongodb_instance_0   = "mongo-0"
+  mongodb_instance_1   = "mongo-1"
+  mongodb_instance_2   = "mongo-2"
   user_data            = <<EOF
-  #!/bin/bash
+#!/bin/bash
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-rachit -s
 sudo systemctl restart amazon-cloudwatch-agent.service
 EOF
